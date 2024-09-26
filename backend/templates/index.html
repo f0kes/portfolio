@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Search on Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .result {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <script>
+        async function performSearch() {
+            // Get the query and threshold values
+            const query = document.getElementById('searchQuery').value;
+            const threshold = document.getElementById('threshold').value || 0.7;
+
+            // Check if the query is empty
+            if (!query.trim()) {
+                alert("Please enter a search query.");
+                return;
+            }
+
+            // Send the search request to the backend
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: query,
+                }),
+            });
+
+            // Parse the response
+            const results = await response.json();
+
+            // Clear previous results
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            // Handle error messages or display results
+            if (results.error) {
+                resultsContainer.innerHTML = `<p class="error">${results.error}</p>`;
+            } else if (results.message) {
+                resultsContainer.innerHTML = `<p>${results.message}</p>`;
+            } else {
+                // Loop over the search results and display them
+                results.forEach(result => {
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'result';
+
+                    // Add the document name and similarity score
+                    const header = document.createElement('h2');
+                    header.innerHTML = `Document: ${result.name} (Score: ${result.similarity.toFixed(2)})`;
+                    resultDiv.appendChild(header);
+
+                    //Matched Sentence
+                    const matchedSentence = document.createElement('h3');
+                    matchedSentence.innerHTML = `Matched Sentence: ...${result.sentence}...`;
+                    resultDiv.appendChild(matchedSentence);
+
+                    // Insert the HTML content from the document
+                    const content = document.createElement('div');
+                    content.innerHTML = result.html;
+                    resultDiv.appendChild(content);
+
+                    // Append the result to the results container
+                    resultsContainer.appendChild(resultDiv);
+                });
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Semantic Search on My Projects</h1>
+
+    <!-- Search Input -->
+    <input type="text" id="searchQuery" placeholder="Enter your query" style="width: 80%;">
+    <br><br>
+
+    <!-- Threshold Input -->
+    <label for="threshold">Similarity Threshold (default: 0.7):</label>
+    <input type="number" id="threshold" min="0" max="1" step="0.1" value="0.7">
+    <br><br>
+
+    <!-- Search Button -->
+    <button onclick="performSearch()">Search</button>
+
+    <!-- Results Container -->
+    <div id="results"></div>
+</body>
+
+</html>

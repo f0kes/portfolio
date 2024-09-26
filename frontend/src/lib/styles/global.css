@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.gradient-text {
+    background: linear-gradient(45deg, #e4572e, #fe9000);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.text-primary {
+    color: #e4572e;
+}
+
+.bg-primary {
+    background-color: #e4572e;
+}
+
+.hover\:bg-primary-dark:hover {
+    background-color: #c13e1d;
+}

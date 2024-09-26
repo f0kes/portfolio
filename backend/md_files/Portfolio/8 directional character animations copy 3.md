@@ -1,0 +1,1 @@
+An innovative tool that uses artificial intelligence to procedurally generate game maps, combined with a user-friendly editor for fine-tuning. This system could create diverse landscapes, dungeons, or urban environments while allowing developers to customize the results.

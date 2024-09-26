@@ -1,0 +1,1 @@
+An extension or module for ComfyUI, a node-based interface for AI image generation, that adds specialized nodes for string manipulation and processing. This could enhance text-based operations within the ComfyUI workflow.
