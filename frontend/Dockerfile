@@ -1,5 +1,5 @@
-# Use Node.js LTS version
-FROM node:lts-alpine as build
+# Use the latest Node.js version
+FROM node:alpine as build
 
 # Set working directory
 WORKDIR /app
@@ -16,15 +16,20 @@ COPY . .
 # Build the app
 RUN npm run build
 
-# Serve the app
-FROM node:lts-alpine
+# Production stage
+FROM node:alpine
 
 WORKDIR /app
 
-COPY --from=build /app/build build/
-COPY --from=build /app/package.json .
-COPY --from=build /app/node_modules node_modules/
+# Copy build artifacts and necessary files
+COPY --from=build /app/build ./build
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
+
+# Install only production dependencies
+RUN npm ci --only=production
 
 EXPOSE 3000
 
+# Run the app
 CMD ["node", "build"]
