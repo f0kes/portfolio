@@ -22,9 +22,8 @@ FROM node:alpine
 WORKDIR /app
 
 # Copy build artifacts and necessary files
-COPY --from=build /app/build ./build
-COPY --from=build /app/package.json ./
-COPY --from=build /app/node_modules ./node_modules
+# Note: We're copying the entire app directory as SvelteKit's output location can vary
+COPY --from=build /app ./
 
 # Install only production dependencies
 RUN npm ci --only=production
@@ -32,4 +31,4 @@ RUN npm ci --only=production
 EXPOSE 3000
 
 # Run the app
-CMD ["node", "build"]
+CMD ["npm", "run", "start"]
