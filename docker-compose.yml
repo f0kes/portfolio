@@ -31,11 +31,3 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-
-  init-letsencrypt:
-    image: docker:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - .:/app
-    working_dir: /app
-    command: sh -c "chmod +x init-letsencrypt.sh && ./init-letsencrypt.sh"
