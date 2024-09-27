@@ -57,7 +57,7 @@
     }
 </script>
 
-<div class="search-panel w-full bg-gray-100 dark:bg-gray-800 py-8 px-4 sm:py-16 sm:px-6 lg:px-8 my-4 sm:my-8 shadow">
+<div class="search-panel w-full bg-white/90 dark:bg-gray-800/90 py-8 px-4 sm:py-16 sm:px-6 lg:px-8 my-4 sm:my-8 shadow">
     <div class="max-w-7xl mx-auto">
         <div class="container mx-auto px-4">
             <div class="container mx-auto px-4 max-w-4xl">

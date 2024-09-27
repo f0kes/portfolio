@@ -119,7 +119,10 @@
     />
     <div class="container mx-auto px-6">
         <div class="flex flex-col md:flex-row md:space-x-12 justify-evenly">
-            <div class="md:w-1/4 self-start mb-8 md:mb-0" id="sticky-nav">
+            <div
+                class="md:w-1/4 self-start mb-8 md:mb-0 bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-lg"
+                id="sticky-nav"
+            >
                 <div class="sticky-nav">
                     <h3
                         class="text-4xl font-bold text-center mb-6 gradient-text"
@@ -127,9 +130,13 @@
                         Projects
                     </h3>
 
-                    <ul class="list-group">
+                    <ul
+                        class="list-group border border-gray-200 rounded-md dark:border-gray-700"
+                    >
                         {#each $searchResults as result, index}
-                            <li class="list-group-item">
+                            <li
+                                class="list-group-item border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+                            >
                                 <a
                                     href={`#result-${index}`}
                                     class="toc-item block py-4 px-4 transition duration-300"
@@ -181,14 +188,6 @@
 </section>
 
 <style>
-    .list-group {
-        @apply border border-gray-200 rounded-md dark:border-gray-700;
-    }
-
-    .list-group-item {
-        @apply border-b border-gray-200 dark:border-gray-700 last:border-b-0;
-    }
-
     .toc-item {
         @apply text-sm hover:bg-primary hover:text-white;
     }
@@ -199,7 +198,7 @@
 
     #sticky-nav {
         position: sticky;
-        top: 25px;
+        top: 100px;
     }
 
     @media (max-width: 768px) {

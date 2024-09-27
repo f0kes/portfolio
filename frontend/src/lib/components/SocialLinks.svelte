@@ -3,7 +3,7 @@
         href="https://github.com/f0kes"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-4xl hover:text-gray-300 transition duration-300"
+        class="text-4xl hover:text-gray-300 transition duration-300 icon-link"
     >
         <svg
             class="w-8 h-8 fill-current"
@@ -19,7 +19,7 @@
         href="https://twitter.com/f0kes"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-4xl text-blue-400 hover:text-blue-300 transition duration-300"
+        class="text-4xl text-blue-400 hover:text-blue-300 transition duration-300 icon-link"
     >
         <svg
             class="w-8 h-8 fill-current"
@@ -35,7 +35,7 @@
         href="https://t.me/f0kes"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-4xl text-blue-500 hover:text-blue-400 transition duration-300"
+        class="text-4xl text-blue-500 hover:text-blue-400 transition duration-300 icon-link"
     >
         <svg
             class="w-8 h-8 fill-current"
@@ -48,3 +48,19 @@
         </svg>
     </a>
 </div>
+
+<style>
+  :global(.dark) .icon-link svg {
+    filter: invert(1);
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    .icon-link svg {
+      filter: invert(1);
+    }
+    :global(.dark) .icon-link svg {
+      filter: none;
+    }
+  }
+</style>
+

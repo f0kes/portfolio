@@ -1,14 +1,21 @@
 import { writable } from 'svelte/store';
-import { browser } from '$app/environment';
 
-export const isDarkMode = writable(false);
+const prefersDarkMode = typeof window !== 'undefined'
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : false;
 
-if (browser) {
-    isDarkMode.subscribe(value => {
-        if (value) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    });
-}
+const storedDarkMode = typeof localStorage !== 'undefined'
+    ? localStorage.getItem('darkMode')
+    : null;
+
+export const isDarkMode = writable(
+    storedDarkMode !== null
+        ? storedDarkMode === 'true'
+        : prefersDarkMode
+);
+
+isDarkMode.subscribe(value => {
+    if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('darkMode', value.toString());
+    }
+});
