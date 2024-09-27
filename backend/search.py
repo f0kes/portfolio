@@ -84,17 +84,16 @@ def search(query, embedded_docs, top_k=5):
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
         top_sentence_index = similarities.argmax()
-
+        similarity = (similarities.max() + similarities.mean()).item() / 2
         # Mark the chosen sentence with a CSS class in the HTML content
-        if similarities.max() > 0.4:
-            results.append(
-                {
-                    "path": doc.path,
-                    "name": doc.name,
-                    "html": doc.html,
-                    "sentence": doc.sentences[top_sentence_index],
-                    "similarity": similarities.max().item(),
-                }
-            )
+        results.append(
+            {
+                "path": doc.path,
+                "name": doc.name,
+                "html": doc.html,
+                "sentence": doc.sentences[top_sentence_index],
+                "similarity": similarity,
+            }
+        )
 
     return sorted(results, key=lambda x: x["similarity"], reverse=True)[:top_k]
