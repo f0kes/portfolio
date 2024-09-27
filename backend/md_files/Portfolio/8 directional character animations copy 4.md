@@ -1,1 +1,0 @@
-A large-scale simulation engine capable of handling 10,000 individual units simultaneously. This project focuses on optimizing performance to manage complex interactions, pathfinding, and behaviors for a massive number of entities in real-time.

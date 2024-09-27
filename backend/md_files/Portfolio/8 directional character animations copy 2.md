@@ -1,1 +1,0 @@
-A system for creating smooth character animations in 8 directions, typically used in 2D or isometric games. This project involves designing sprite sheets or 3D models that can be rotated to show realistic movement from multiple angles.
