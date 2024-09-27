@@ -93,7 +93,7 @@ def search(query, embedded_docs, top_k=5):
                 "name": doc.name,
                 "html": doc.html,
                 "sentence": doc.sentences[top_sentence_index],
-                "similarity": similarities.mean().item(),
+                "similarity": similarities.max().item(),
             }
         )
 
