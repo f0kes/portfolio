@@ -21,7 +21,7 @@ def is_json_serializable(obj):
         return False
 
 
-def clean_dict_for_jsonify(data):
+def clean_dict_for_jsonify(data: dict[str, any]) -> dict[str, any]:
     cleaned_dict = {}
 
     for key, value in data.items():
@@ -62,7 +62,7 @@ def search_documents():
         return jsonify({"message": "No relevant documents found."})
 
     # Use custom conversion for NumPy types before returning the response
-    results = clean_dict_for_jsonify(results)
+    results = [clean_dict_for_jsonify(result) for result in results]
     return jsonify(results), 200
 
 
