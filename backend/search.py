@@ -20,12 +20,13 @@ cross_encoder = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 # Define EmbeddedDoc type
 class EmbeddedDoc:
-    def __init__(self, path, name, html, sentences, embeddings):
+    def __init__(self, path, name, html, sentences, embeddings, full_embedding):
         self.path = path
         self.name = name
         self.html = html
         self.sentences = sentences  # List of sentences
         self.embeddings = embeddings  # List of embeddings for sentences
+        self.full_embedding = full_embedding  # Single embedding for the full document
 
 
 def strip_markdown(text):
@@ -63,6 +64,7 @@ def load_md_files(directory="./md_files"):
                                 html=html_content,
                                 sentences=sentences,
                                 embeddings=embeddings,
+                                full_embedding=bi_encoder.encode([plain_text])[0],
                             )
                         )
     return documents
@@ -86,7 +88,7 @@ def search(query, embedded_docs, top_k=10):
     results = []
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
-        similarity = np.mean(similarities)
+        similarity = cosine_similarity([query_embedding], [doc.full_embedding])[0][0]
         sentence = doc.sentences[np.argmax(similarities)]
         results.append(
             {
