@@ -13,8 +13,18 @@ from flask_cors import CORS
 CORS(app)
 
 
+def is_json_serializable(obj):
+    try:
+        jsonify(obj)
+        return True
+    except (TypeError, OverflowError):
+        return False
+
+
 # Custom function to convert NumPy types to Python native types
-def convert_numpy(obj):
+def prepare_for_json(obj):
+    if is_json_serializable(obj):
+        return obj
     if isinstance(obj, np.generic):
         return (
             obj.item()
@@ -45,7 +55,9 @@ def search_documents():
         return jsonify({"message": "No relevant documents found."})
 
     # Use custom conversion for NumPy types before returning the response
-    results = [{k: convert_numpy(v) for k, v in result.items()} for result in results]
+    results = [
+        {k: prepare_for_json(v) for k, v in result.items()} for result in results
+    ]
     return jsonify(results), 200
 
 
