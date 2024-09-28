@@ -102,4 +102,4 @@ def search(query, embedded_docs, top_k=3):
     cross_scores = cross_encoder.predict(cross_inp)
     for result, score in zip(results[:top_k], cross_scores):
         result["score"] = score
-    return sorted(results, key=lambda x: x["score"], reverse=True)[:top_k]
+    return sorted(results[:top_k], key=lambda x: x["score"], reverse=True)
