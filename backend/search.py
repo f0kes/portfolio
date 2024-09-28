@@ -11,6 +11,7 @@ import re
 
 # Download the punkt tokenizer for sentence splitting
 nltk.download("punkt")
+nltk.download("punkt_tab")
 
 # Load pre-trained Sentence BERT model
 bi_encoder = SentenceTransformer("multi-qa-MiniLM-L6-cos-v1")
