@@ -45,6 +45,7 @@ def search_documents():
         return jsonify({"message": "No relevant documents found."})
 
     # Use custom conversion for NumPy types before returning the response
+    results = [{k: convert_numpy(v) for k, v in result.items()} for result in results]
     return jsonify(results), 200
 
 
