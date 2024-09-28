@@ -98,7 +98,7 @@ def search(query, embedded_docs, top_k=10):
                 }
             )
 
-    cross_inp = [[query, result["paragraph"]] for result in results[:top_k]]
+    cross_inp = [[query, result["sentence"]] for result in results[:top_k]]
     cross_scores = cross_encoder.predict(cross_inp)
     for result, score in zip(results[:top_k], cross_scores):
         result["similarity"] = score
