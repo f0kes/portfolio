@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import torch
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import SentenceTransformer, CrossEncoder, util
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 from nltk.tokenize import sent_tokenize
@@ -11,19 +11,20 @@ import re
 
 # Download the punkt tokenizer for sentence splitting
 nltk.download("punkt")
-nltk.download("punkt_tab")
+
 # Load pre-trained Sentence BERT model
-model = SentenceTransformer("all-MiniLM-L6-v2")
+bi_encoder = SentenceTransformer("multi-qa-MiniLM-L6-cos-v1")
+cross_encoder = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 
 # Define EmbeddedDoc type
 class EmbeddedDoc:
-    def __init__(self, path, name, html, sentences, embeddings):
+    def __init__(self, path, name, html, paragraphs, embeddings):
         self.path = path
         self.name = name
         self.html = html
-        self.sentences = sentences
-        self.embeddings = embeddings  # List of embeddings for sentences
+        self.paragraphs = paragraphs  # List of paragraphs
+        self.embeddings = embeddings  # List of embeddings for paragraphs
 
 
 def strip_markdown(text):
@@ -32,12 +33,14 @@ def strip_markdown(text):
     return soup.get_text(), html
 
 
-def split_into_sentences(text):
-    return sent_tokenize(text)
+def split_into_paragraphs(text):
+    # Split the text into paragraphs based on newlines
+    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
+    return paragraphs
 
 
-def embed_sentences(sentences):
-    return model.encode(sentences)
+def embed_paragraphs(paragraphs):
+    return bi_encoder.encode(paragraphs)
 
 
 def load_md_files(directory="./md_files"):
@@ -50,26 +53,28 @@ def load_md_files(directory="./md_files"):
                     content = file.read()
                     plain_text, html_content = strip_markdown(content)
                     if plain_text:
-                        sentences = split_into_sentences(plain_text)
-                        embeddings = embed_sentences(sentences)
+                        paragraphs = split_into_paragraphs(plain_text)
+                        embeddings = embed_paragraphs(paragraphs)
                         documents.append(
                             EmbeddedDoc(
                                 path=filepath,
                                 name=filename,
                                 html=html_content,
-                                sentences=sentences,
+                                paragraphs=paragraphs,
                                 embeddings=embeddings,
                             )
                         )
     return documents
 
 
-def mark_sentence_with_class(html_content, sentence, class_name="highlighted-sentence"):
-    # Escape special characters in the sentence for regex
-    escaped_sentence = re.escape(sentence.strip())
-    # Replace the sentence with its marked version in the HTML content
+def mark_paragraph_with_class(
+    html_content, paragraph, class_name="highlighted-paragraph"
+):
+    # Escape special characters in the paragraph for regex
+    escaped_paragraph = re.escape(paragraph.strip())
+    # Replace the paragraph with its marked version in the HTML content
     marked_html = re.sub(
-        f"({escaped_sentence})",
+        f"({escaped_paragraph})",
         f'<span class="{class_name}">\g<1></span>',
         html_content,
         flags=re.IGNORECASE,
@@ -77,23 +82,24 @@ def mark_sentence_with_class(html_content, sentence, class_name="highlighted-sen
     return marked_html
 
 
-def search(query, embedded_docs, top_k=5):
-    query_embedding = model.encode([query])[0]
+def search(query, embedded_docs, top_k=3):
+    query_embedding = bi_encoder.encode([query])[0]
     results = []
-
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
-        top_sentence_index = similarities.argmax()
-        similarity = (similarities.max() + similarities.mean()).item() / 2
-        # Mark the chosen sentence with a CSS class in the HTML content
-        results.append(
-            {
-                "path": doc.path,
-                "name": doc.name,
-                "html": doc.html,
-                "sentence": doc.sentences[top_sentence_index],
-                "similarity": similarity,
-            }
-        )
+        for paragraph, similarity in zip(doc.paragraphs, similarities):
+            results.append(
+                {
+                    "path": doc.path,
+                    "name": doc.name,
+                    "html": doc.html,
+                    "paragraph": paragraph,
+                    "similarity": similarity,
+                }
+            )
 
-    return sorted(results, key=lambda x: x["similarity"], reverse=True)[:top_k]
+    cross_inp = [[query, result["paragraph"]] for result in results[:top_k]]
+    cross_scores = cross_encoder.predict(cross_inp)
+    for result, score in zip(results[:top_k], cross_scores):
+        result["score"] = score
+    return sorted(results, key=lambda x: x["score"], reverse=True)[:top_k]
