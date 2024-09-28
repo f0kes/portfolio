@@ -87,16 +87,17 @@ def search(query, embedded_docs, top_k=10):
     results = []
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
-        for paragraph, similarity in zip(doc.paragraphs, similarities):
-            results.append(
-                {
-                    "path": doc.path,
-                    "name": doc.name,
-                    "html": doc.html,
-                    "sentence": paragraph,
-                    "similarity": similarity,
-                }
-            )
+        similarity = np.max(similarities)
+        paragraph = doc.paragraphs[np.argmax(similarities)]
+        results.append(
+            {
+                "path": doc.path,
+                "name": doc.name,
+                "html": doc.html,
+                "sentence": paragraph,
+                "similarity": similarity,
+            }
+        )
 
     cross_inp = [[query, result["sentence"]] for result in results[:top_k]]
     cross_scores = cross_encoder.predict(cross_inp)
