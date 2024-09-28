@@ -87,7 +87,7 @@ def search(query, embedded_docs, top_k=10):
     results = []
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
-        similarity = np.max(similarities)
+        similarity = np.mean(similarities)
         paragraph = doc.paragraphs[np.argmax(similarities)]
         results.append(
             {
