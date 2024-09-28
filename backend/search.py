@@ -19,12 +19,12 @@ cross_encoder = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
 # Define EmbeddedDoc type
 class EmbeddedDoc:
-    def __init__(self, path, name, html, paragraphs, embeddings):
+    def __init__(self, path, name, html, sentences, embeddings):
         self.path = path
         self.name = name
         self.html = html
-        self.paragraphs = paragraphs  # List of paragraphs
-        self.embeddings = embeddings  # List of embeddings for paragraphs
+        self.sentences = sentences  # List of sentences
+        self.embeddings = embeddings  # List of embeddings for sentences
 
 
 def strip_markdown(text):
@@ -33,14 +33,14 @@ def strip_markdown(text):
     return soup.get_text(), html
 
 
-def split_into_paragraphs(text):
-    # Split the text into paragraphs based on newlines
-    paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
-    return paragraphs
+def split_into_sentences(text):
+    # Split the text into sentences using nltk's sent_tokenize
+    sentences = sent_tokenize(text)
+    return [s.strip() for s in sentences if s.strip()]
 
 
-def embed_paragraphs(paragraphs):
-    return bi_encoder.encode(paragraphs)
+def embed_sentences(sentences):
+    return bi_encoder.encode(sentences)
 
 
 def load_md_files(directory="./md_files"):
@@ -53,28 +53,26 @@ def load_md_files(directory="./md_files"):
                     content = file.read()
                     plain_text, html_content = strip_markdown(content)
                     if plain_text:
-                        paragraphs = split_into_paragraphs(plain_text)
-                        embeddings = embed_paragraphs(paragraphs)
+                        sentences = split_into_sentences(plain_text)
+                        embeddings = embed_sentences(sentences)
                         documents.append(
                             EmbeddedDoc(
                                 path=filepath,
                                 name=filename,
                                 html=html_content,
-                                paragraphs=paragraphs,
+                                sentences=sentences,
                                 embeddings=embeddings,
                             )
                         )
     return documents
 
 
-def mark_paragraph_with_class(
-    html_content, paragraph, class_name="highlighted-paragraph"
-):
-    # Escape special characters in the paragraph for regex
-    escaped_paragraph = re.escape(paragraph.strip())
-    # Replace the paragraph with its marked version in the HTML content
+def mark_sentence_with_class(html_content, sentence, class_name="highlighted-sentence"):
+    # Escape special characters in the sentence for regex
+    escaped_sentence = re.escape(sentence.strip())
+    # Replace the sentence with its marked version in the HTML content
     marked_html = re.sub(
-        f"({escaped_paragraph})",
+        f"({escaped_sentence})",
         f'<span class="{class_name}">\g<1></span>',
         html_content,
         flags=re.IGNORECASE,
@@ -88,13 +86,13 @@ def search(query, embedded_docs, top_k=10):
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
         similarity = np.mean(similarities)
-        paragraph = doc.paragraphs[np.argmax(similarities)]
+        sentence = doc.sentences[np.argmax(similarities)]
         results.append(
             {
                 "path": doc.path,
                 "name": doc.name,
                 "html": doc.html,
-                "sentence": paragraph,
+                "sentence": sentence,
                 "similarity": similarity,
             }
         )
@@ -104,3 +102,8 @@ def search(query, embedded_docs, top_k=10):
     for result, score in zip(results[:top_k], cross_scores):
         result["similarity"] = score
     return sorted(results[:top_k], key=lambda x: x["similarity"], reverse=True)
+
+
+# Example usage:
+# embedded_docs = load_md_files()  # Load your markdown files
+# search_results = search("Your query here", embedded_docs)  # Search for a query
