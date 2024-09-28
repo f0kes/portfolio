@@ -15,21 +15,28 @@ CORS(app)
 
 def is_json_serializable(obj):
     try:
-        jsonify(obj)
+        jsonify(obj)  # Try serializing with the standard JSON library
         return True
     except (TypeError, OverflowError):
         return False
 
 
-# Custom function to convert NumPy types to Python native types
-def prepare_for_json(obj):
-    if is_json_serializable(obj):
-        return obj
-    if isinstance(obj, np.generic):
-        return (
-            obj.item()
-        )  # Convert NumPy scalar (e.g., np.float32) to native Python type
-    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+def clean_dict_for_jsonify(data):
+    cleaned_dict = {}
+
+    for key, value in data.items():
+        # Check if value is JSON serializable
+        if is_json_serializable(value):
+            cleaned_dict[key] = value
+        # Check if value is a NumPy object (number or array-like)
+        elif isinstance(value, np.generic):  # Handles numpy scalar types
+            cleaned_dict[key] = value.item()
+        elif (
+            isinstance(value, np.ndarray) and value.size == 1
+        ):  # Handles 1-element numpy arrays
+            cleaned_dict[key] = value.item()
+
+    return cleaned_dict
 
 
 # Home route to render the search interface (serves index.html)
@@ -56,7 +63,7 @@ def search_documents():
 
     # Use custom conversion for NumPy types before returning the response
     results = [
-        {k: prepare_for_json(v) for k, v in result.items()} for result in results
+        {k: clean_dict_for_jsonify(v) for k, v in result.items()} for result in results
     ]
     return jsonify(results), 200
 
