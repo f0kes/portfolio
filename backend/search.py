@@ -82,7 +82,7 @@ def mark_paragraph_with_class(
     return marked_html
 
 
-def search(query, embedded_docs, top_k=3):
+def search(query, embedded_docs, top_k=10):
     query_embedding = bi_encoder.encode([query])[0]
     results = []
     for doc in embedded_docs:
@@ -93,7 +93,7 @@ def search(query, embedded_docs, top_k=3):
                     "path": doc.path,
                     "name": doc.name,
                     "html": doc.html,
-                    "paragraph": paragraph,
+                    "sentence": paragraph,
                     "similarity": similarity,
                 }
             )
@@ -101,5 +101,5 @@ def search(query, embedded_docs, top_k=3):
     cross_inp = [[query, result["paragraph"]] for result in results[:top_k]]
     cross_scores = cross_encoder.predict(cross_inp)
     for result, score in zip(results[:top_k], cross_scores):
-        result["score"] = score
-    return sorted(results[:top_k], key=lambda x: x["score"], reverse=True)
+        result["similarity"] = score
+    return sorted(results[:top_k], key=lambda x: x["similarity"], reverse=True)
