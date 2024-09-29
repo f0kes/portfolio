@@ -1,6 +1,8 @@
 Steam Game Recommendation System
-[github](https://github.com/f0kes/steam)
 This project implements a sophisticated recommendation system for Steam games using collaborative filtering and matrix factorization techniques. Key features include:
+
+g[https://github.com/f0kes/steam]
+![[Pasted image 20240930022954.png]]
 
 - Data collection and preprocessing of Steam user playtime data using PostgreSQL and Python
 - Latent space analysis using Singular Value Decomposition (SVD)

@@ -48,7 +48,7 @@ def embed_sentences(sentences):
 
 def convert_custom_image_syntax(match):
     image_path = match.group(1)
-    return f'<img src="/static{image_path}">'
+    return f'<img src="/static/Portfolio{image_path}">'
 
 
 def load_md_files(directory="./md_files"):

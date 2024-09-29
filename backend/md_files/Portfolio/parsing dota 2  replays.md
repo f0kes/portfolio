@@ -1,5 +1,8 @@
 This project is a sophisticated Dota 2 replay parser and state tracker, designed to analyze and extract detailed game information from Dota 2 replay files. It processes replay data in real-time, tracking the state of heroes, units, and game events throughout the match.
 
+g[https://github.com/f0kes/tarrasque_parser]
+![[Pasted image 20240930022713.png]]
+
 Key Features:
 
 1. Real-time replay parsing: Processes Dota 2 replay files as they are streamed.

@@ -1,3 +1,6 @@
+g[https://github.com/f0kes/fc-vs]
+![[Pasted image 20240930022107.png]]
+
 This project leverages GPU compute power to handle unit behaviors and spatial queries, achieving a 10x increase in simulated unit count compared to CPU-only solutions. The use of compute shaders and efficient data structures enables complex RTS gameplay at unprecedented scale.
 
 Key Features:
