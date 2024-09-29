@@ -59,9 +59,9 @@ def load_md_files(directory="./md_files"):
                 filepath = os.path.join(root, filename)
                 with open(filepath, "r", encoding="utf-8") as file:
                     content = file.read()
-                    content = re.sub(
-                        r"!\[\[(.+?)\]\]", convert_custom_image_syntax, content
-                    )
+                    # content = re.sub(
+                    #    r"!\[\[(.+?)\]\]", convert_custom_image_syntax, content
+                    # )
                     plain_text, html_content = strip_markdown(content)
                     if plain_text:
                         sentences = split_into_sentences(plain_text)
