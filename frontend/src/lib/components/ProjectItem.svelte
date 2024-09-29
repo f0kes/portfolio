@@ -40,7 +40,7 @@
         let match;
         let isFirstImage = true;
         while ((match = imageRegex.exec(html)) !== null) {
-            const imagePath = `/static/Portfolio${match[1]}`;
+            const imagePath = `/Portfolio/${match[1]}`;
             if (isFirstImage) {
                 bannerImage = imagePath;
                 isFirstImage = false;
