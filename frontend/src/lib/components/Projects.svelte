@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
     import SearchBar from "./SearchBar.svelte";
+    import ProjectItem from "./ProjectItem.svelte";
 
     interface SearchResult {
         path: string;
@@ -9,6 +10,8 @@
         html: string;
         sentence: string;
         similarity: number;
+        githubLink: string;
+        previewImage: string;
     }
 
     let searchResults = writable<SearchResult[]>([]);
@@ -20,6 +23,10 @@
     function handleSearchError(event: CustomEvent<Error>) {
         console.error("Search error:", event.detail);
         // You can add error handling logic here, such as displaying an error message to the user
+    }
+
+    function stripMdExtension(filename: string) {
+        return filename.endsWith(".md") ? filename.slice(0, -3) : filename;
     }
 
     onMount(() => {
@@ -141,7 +148,7 @@
                                     href={`#result-${index}`}
                                     class="toc-item block py-4 px-4 transition duration-300"
                                 >
-                                    {result.name}
+                                    {stripMdExtension(result.name)}
                                 </a>
                             </li>
                         {/each}
@@ -151,43 +158,14 @@
 
             <div class="md:w-2/4 space-y-12 mx-auto">
                 {#each $searchResults as result, index}
-                    <div class="result-section" id={`result-${index}`}>
-                        <div
-                            class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
-                        >
-                            <h2 class="text-2xl font-bold mb-4">
-                                {result.name}
-                            </h2>
-                            <p class="text-gray-600 dark:text-gray-400 mb-4">
-                                Path: {result.path}
-                            </p>
-                            <div class="mb-4">
-                                <h3 class="text-lg font-semibold mb-2">
-                                    Matched Sentence:
-                                </h3>
-                                <p>{result.sentence}</p>
-                            </div>
-                            <div class="mb-4">
-                                <h3 class="text-lg font-semibold mb-2">
-                                    Similarity Score:
-                                </h3>
-                                <p>{result.similarity.toFixed(4)}</p>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold mb-2">
-                                    Content:
-                                </h3>
-                                {@html result.html}
-                            </div>
-                        </div>
-                    </div>
+                    <ProjectItem {result} {index} />
                 {/each}
             </div>
         </div>
     </div>
 </section>
 
-<style>
+<style lang="postcss">
     .toc-item {
         @apply text-sm hover:bg-primary hover:text-white;
     }
@@ -207,5 +185,42 @@
             margin-top: 0;
             padding-top: 0;
         }
+    }
+    [id^="result-"] {
+        scroll-margin-top: 80px; /* Adjust this value based on your header height */
+    }
+
+    /* These styles will be applied globally */
+    :global(.formatted-content) {
+        @apply text-gray-700 dark:text-gray-300;
+    }
+
+    :global(.formatted-content p) {
+        @apply mb-4;
+    }
+
+    :global(.formatted-content ul),
+    :global(.formatted-content ol) {
+        @apply ml-6;
+    }
+
+    :global(.formatted-content ul) {
+        @apply list-disc;
+    }
+
+    :global(.formatted-content ol) {
+        @apply list-decimal;
+    }
+
+    :global(.formatted-content li) {
+        @apply pl-1 ml-4;
+    }
+    :global(.formatted-content  a) {
+        @apply text-primary; 
+    }
+
+    :global(.formatted-content ul li::marker),
+    :global(.formatted-content ol li::marker) {
+        @apply text-primary font-bold;
     }
 </style>

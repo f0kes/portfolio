@@ -8,6 +8,8 @@ from nltk.tokenize import sent_tokenize
 import markdown
 from bs4 import BeautifulSoup
 import re
+import faiss
+
 
 # Download the punkt tokenizer for sentence splitting
 nltk.download("punkt")
@@ -43,6 +45,12 @@ def split_into_sentences(text):
 
 def embed_sentences(sentences):
     return bi_encoder.encode(sentences)
+    bi_encoder.las
+
+
+def convert_custom_image_syntax(match):
+    image_path = match.group(1)
+    return f'<img src="/static{image_path}">'
 
 
 def load_md_files(directory="./md_files"):
@@ -53,6 +61,9 @@ def load_md_files(directory="./md_files"):
                 filepath = os.path.join(root, filename)
                 with open(filepath, "r", encoding="utf-8") as file:
                     content = file.read()
+                    content = re.sub(
+                        r"!\[\[(.+?)\]\]", convert_custom_image_syntax, content
+                    )
                     plain_text, html_content = strip_markdown(content)
                     if plain_text:
                         sentences = split_into_sentences(plain_text)

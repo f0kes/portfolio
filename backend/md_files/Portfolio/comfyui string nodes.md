@@ -3,24 +3,18 @@ This project is a custom node extension for ComfyUI, a powerful and modular stab
 Key Features:
 
 1. String Manipulation Nodes:
-    
     - StringSplitter: Splits a multi-line string input into individual strings.
     - UnzipStrings: Unpacks zipped strings for further processing.
     - StringCombinations: Generates combinations of strings from two input lists.
 2. File Operations:
-    
     - FileCounter: Counts the number of files in a specified directory.
 3. Input Construction:
-    
     - InputStringConstructor: Builds complex file paths based on multiple input parameters.
 4. Flexible Input Types:
-    
     - Supports various input types including strings, integers, floats, and selections.
 5. Custom Node Categories:
-    
     - Organizes nodes into logical categories for easy access in the ComfyUI interface.
 6. Output Handling:
-    
     - Provides single and multiple output options, including list outputs.
 
 Key Technologies:

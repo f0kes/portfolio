@@ -2,7 +2,7 @@ I developed a data-driven algorithm to model and analyze user playtime shifts ac
 
 The process aggregates user-level data into a global flow matrix, which provides a clear view of how gaming attention shifts across the community. This tool may help game developers and analysts track trends in user engagement, identify games gaining or losing traction, and derive insights into player behavior for strategic decision-making.
 
-- - for each user create a time delta vector D (for each game hour difference between earlier and latest snapshot). total gain is sum of all positive game deltas g. total loss is sum of all negative game deltas l
+- for each user create a time delta vector D (for each game hour difference between earlier and latest snapshot). total gain is sum of all positive game deltas g. total loss is sum of all negative game deltas l
   $D_{i} = \textup{played }_{ i, now}-\textup{played }_{ i, last}$
   $g =\sum_{\substack{ D_i > 0}} D_i$
   $l =\sum_{\substack{ D_i < 0}} D_i$
