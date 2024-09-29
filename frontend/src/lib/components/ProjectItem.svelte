@@ -21,12 +21,35 @@
     let expanded = false;
     let firstParagraph = "";
     let contentWrapper: HTMLElement;
+    let bannerImage = "";
 
     function stripMdExtension(filename: string) {
         return filename.endsWith(".md") ? filename.slice(0, -3) : filename;
     }
 
     function formatHtml(html: string): string {
+        // Extract GitHub link
+        const githubLinkMatch = html.match(/g\[(.*?)\]/);
+        if (githubLinkMatch) {
+            result.githubLink = githubLinkMatch[1];
+            html = html.replace(githubLinkMatch[0], '');
+        }
+
+        // Process image links
+        const imageRegex = /!\[\[(.*?)\]\]/g;
+        let match;
+        let isFirstImage = true;
+        while ((match = imageRegex.exec(html)) !== null) {
+            const imagePath = `/static/Portfolio${match[1]}`;
+            if (isFirstImage) {
+                bannerImage = imagePath;
+                isFirstImage = false;
+                html = html.replace(match[0], '');
+            } else {
+                html = html.replace(match[0], `<img src="${imagePath}">`);
+            }
+        }
+
         // Decode HTML entities
         const decodeHtml = (html: string) => {
             const txt = document.createElement("textarea");
@@ -100,8 +123,7 @@
 
         <div class="mb-6 -mx-6">
             <img
-                src={result.previewImage ||
-                    "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg"}
+                src={bannerImage || "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg"}
                 alt="Project Banner"
                 class="w-full h-48 object-cover"
             />
