@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import torch
 from sentence_transformers import SentenceTransformer, CrossEncoder, util
 from sklearn.metrics.pairwise import cosine_similarity
 import nltk
@@ -8,7 +7,6 @@ from nltk.tokenize import sent_tokenize
 import markdown
 from bs4 import BeautifulSoup
 import re
-import faiss
 
 
 # Download the punkt tokenizer for sentence splitting
