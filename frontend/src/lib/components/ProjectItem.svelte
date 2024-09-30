@@ -5,6 +5,7 @@
     import katex from "katex";
     import "katex/dist/katex.min.css";
     import { slide } from "svelte/transition";
+    import { API_BASE_URL } from "$lib/config";
 
     export let result: {
         path: string;
@@ -32,7 +33,7 @@
         const githubLinkMatch = html.match(/g\[(.*?)\]/);
         if (githubLinkMatch) {
             result.githubLink = githubLinkMatch[1];
-            html = html.replace(githubLinkMatch[0], '');
+            html = html.replace(githubLinkMatch[0], "");
         }
 
         // Process image links
@@ -40,13 +41,16 @@
         let match;
         let isFirstImage = true;
         while ((match = imageRegex.exec(html)) !== null) {
-            const imagePath = `/Portfolio/${match[1]}`;
+            const imagePath = `${match[1]}`;
             if (isFirstImage) {
                 bannerImage = imagePath;
                 isFirstImage = false;
-                html = html.replace(match[0], '');
+                html = html.replace(match[0], "");
             } else {
-                html = html.replace(match[0], `<img src="${imagePath}">`);
+                html = html.replace(
+                    match[0],
+                    `<img src="${API_BASE_URL}/${imagePath}">`,
+                );
             }
         }
 
@@ -123,7 +127,8 @@
 
         <div class="mb-6 -mx-6">
             <img
-                src={bannerImage || "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg"}
+                src={bannerImage ||
+                    "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg"}
                 alt="Project Banner"
                 class="w-full h-48 object-cover"
             />

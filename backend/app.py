@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 import numpy as np
 from search import load_md_files, search
 
@@ -64,6 +64,11 @@ def search_documents():
     # Use custom conversion for NumPy types before returning the response
     results = [clean_dict_for_jsonify(result) for result in results]
     return jsonify(results), 200
+
+
+@app.route("/images/<path:filename>")
+def serve_image(filename):
+    return send_from_directory("./md_files/Portfolio", filename)
 
 
 # Start the server
