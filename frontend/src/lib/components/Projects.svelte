@@ -15,14 +15,15 @@
     }
 
     let searchResults = writable<SearchResult[]>([]);
+    let searchCounter = 0;
 
     function handleSearchResults(event: CustomEvent<SearchResult[]>) {
         searchResults.set(event.detail);
+        searchCounter++; // Increment the counter on each search
     }
 
     function handleSearchError(event: CustomEvent<Error>) {
         console.error("Search error:", event.detail);
-        // You can add error handling logic here, such as displaying an error message to the user
     }
 
     function stripMdExtension(filename: string) {
@@ -140,18 +141,20 @@
                     <ul
                         class="list-group border border-gray-200 rounded-md dark:border-gray-700"
                     >
-                        {#each $searchResults as result, index}
-                            <li
-                                class="list-group-item border-b border-gray-200 dark:border-gray-700 last:border-b-0"
-                            >
-                                <a
-                                    href={`#result-${index}`}
-                                    class="toc-item block py-4 px-4 transition duration-300"
+                        {#key searchCounter}
+                            {#each $searchResults as result, index (result.path + searchCounter)}
+                                <li
+                                    class="list-group-item border-b border-gray-200 dark:border-gray-700 last:border-b-0"
                                 >
-                                    {stripMdExtension(result.name)}
-                                </a>
-                            </li>
-                        {/each}
+                                    <a
+                                        href={`#result-${index}`}
+                                        class="toc-item block py-4 px-4 transition duration-300"
+                                    >
+                                        {stripMdExtension(result.name)}
+                                    </a>
+                                </li>
+                            {/each}
+                        {/key}
                     </ul>
                 </div>
             </div>
@@ -215,8 +218,8 @@
     :global(.formatted-content li) {
         @apply pl-1 ml-4;
     }
-    :global(.formatted-content  a) {
-        @apply text-primary; 
+    :global(.formatted-content a) {
+        @apply text-primary;
     }
 
     :global(.formatted-content ul li::marker),

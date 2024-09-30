@@ -1,6 +1,5 @@
-<!-- ProjectItem.svelte -->
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, afterUpdate } from "svelte";
     import katex from "katex";
     import "katex/dist/katex.min.css";
     import { slide } from "svelte/transition";
@@ -104,7 +103,7 @@
         }, 1);
     }
 
-    onMount(() => {
+    function updateContent() {
         const processedContent = processContent(result.html);
         formattedContent = formatHtml(processedContent);
 
@@ -114,6 +113,24 @@
         if (paragraphs.length > 0) {
             firstParagraph = paragraphs[0].outerHTML;
         }
+        console.log("updateContent");
+    }
+
+    $: {
+        // This reactive statement will run whenever result changes
+        if (result) {
+            updateContent();
+            expanded = false; // Reset expanded state on new content
+            console.log("Result changed, content updated");
+        }
+    }
+
+    onMount(() => {
+        updateContent();
+    });
+
+    afterUpdate(() => {
+        console.log("Component updated");
     });
 </script>
 

@@ -8,8 +8,8 @@
 
     const tags = [
         ["AI", "Data collection", "Games"],
-        ["Shaders", "Python", "C#"],
-        ["Rust"],
+        ["Shaders", "Python"],
+        
     ];
 
     const dispatch = createEventDispatcher();
