@@ -49,7 +49,7 @@
             } else {
                 html = html.replace(
                     match[0],
-                    `<img src="${API_BASE_URL}/${imagePath}">`,
+                    `<img src="${API_BASE_URL}/images/${imagePath}">`,
                 );
             }
         }
