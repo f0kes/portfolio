@@ -41,16 +41,13 @@
         let match;
         let isFirstImage = true;
         while ((match = imageRegex.exec(html)) !== null) {
-            const imagePath = `${match[1]}`;
+            const imagePath = `${API_BASE_URL}/images/${match[1]}`;
             if (isFirstImage) {
                 bannerImage = imagePath;
                 isFirstImage = false;
                 html = html.replace(match[0], "");
             } else {
-                html = html.replace(
-                    match[0],
-                    `<img src="${API_BASE_URL}/images/${imagePath}">`,
-                );
+                html = html.replace(match[0], `<img src="${imagePath}">`);
             }
         }
 
