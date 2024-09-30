@@ -98,8 +98,9 @@ def search(query, embedded_docs, top_k=10):
     for doc in embedded_docs:
         similarities = cosine_similarity([query_embedding], doc.embeddings)[0]
         similarity = cosine_similarity([query_embedding], [doc.full_embedding])[0][0]
-
+        max_similarity = np.max(similarities)
         sentence = doc.sentences[np.argmax(similarities)]
+        similarity = similarity * 0.7 + max_similarity * 0.3
         results.append(
             {
                 "path": doc.path,
@@ -110,10 +111,10 @@ def search(query, embedded_docs, top_k=10):
             }
         )
 
-    cross_inp = [[query, result["sentence"]] for result in results[:top_k]]
+    """ cross_inp = [[query, result["sentence"]] for result in results[:top_k]]
     cross_scores = cross_encoder.predict(cross_inp)
     for result, score in zip(results[:top_k], cross_scores):
-        result["similarity"] = score
+        result["similarity"] = score """
     return sorted(results[:top_k], key=lambda x: x["similarity"], reverse=True)
 
 

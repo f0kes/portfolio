@@ -1,5 +1,4 @@
 <!-- ProjectItem.svelte -->
-
 <script lang="ts">
     import { onMount } from "svelte";
     import katex from "katex";
@@ -23,13 +22,14 @@
     let firstParagraph = "";
     let contentWrapper: HTMLElement;
     let bannerImage = "";
+    let formattedContent = "";
 
     function stripMdExtension(filename: string) {
         return filename.endsWith(".md") ? filename.slice(0, -3) : filename;
     }
 
-    function formatHtml(html: string): string {
-        // Extract GitHub link
+    function processContent(html: string): string {
+        // Process GitHub link
         const githubLinkMatch = html.match(/g\[(.*?)\]/);
         if (githubLinkMatch) {
             result.githubLink = githubLinkMatch[1];
@@ -51,6 +51,10 @@
             }
         }
 
+        return html;
+    }
+
+    function formatHtml(html: string): string {
         // Decode HTML entities
         const decodeHtml = (html: string) => {
             const txt = document.createElement("textarea");
@@ -89,10 +93,9 @@
 
     function toggleExpand() {
         expanded = !expanded;
-        // Use setTimeout to wait for the DOM update and transition to complete
         setTimeout(() => {
             const rect = contentWrapper.getBoundingClientRect();
-            const offset = 225; // Arbitrary offset in pixels
+            const offset = 225;
             const targetScrollTop = window.scrollY + rect.top - offset;
             window.scrollTo({
                 top: targetScrollTop,
@@ -102,7 +105,9 @@
     }
 
     onMount(() => {
-        const formattedContent = formatHtml(result.html);
+        const processedContent = processContent(result.html);
+        formattedContent = formatHtml(processedContent);
+
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = formattedContent;
         const paragraphs = tempDiv.querySelectorAll("p");
@@ -124,8 +129,7 @@
 
         <div class="mb-6 -mx-6">
             <img
-                src={bannerImage ||
-                    "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg"}
+                src={result.previewImage || bannerImage || "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg"}
                 alt="Project Banner"
                 class="w-full h-48 object-cover"
             />
@@ -142,7 +146,7 @@
                         class="formatted-content"
                         transition:slide|local={{ duration: 300 }}
                     >
-                        {@html formatHtml(result.html)}
+                        {@html formattedContent}
                     </div>
                 {/if}
             </div>
@@ -162,9 +166,7 @@
                 >
                     {expanded ? "Collapse" : "Expand"}
                     <svg
-                        class="w-4 h-4 ml-2 transform transition-transform duration-300 {expanded
-                            ? 'rotate-180'
-                            : ''}"
+                        class="w-4 h-4 ml-2 transform transition-transform duration-300 {expanded ? 'rotate-180' : ''}"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
