@@ -21,12 +21,12 @@
     class="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
 >
 
-    <Header />
+    <!-- <Header /> -->
     <main>
         <slot />
         
     </main>
-    <Footer />
+    <!-- <Footer /> -->
 </div>
 
 <style>

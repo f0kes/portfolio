@@ -5,8 +5,8 @@
 </script>
 
 <svelte:head>
-    <title>f0kes - Developer Portfolio</title>
+    <title>f0kes - Developer</title>
 </svelte:head>
 
 <Home />
-<Projects {projects} />
+<!-- <Projects {projects} /> -->
