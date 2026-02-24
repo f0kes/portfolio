@@ -1,10 +1,11 @@
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
 
-const prefersDarkMode = typeof window !== 'undefined'
+const prefersDarkMode = browser
     ? window.matchMedia('(prefers-color-scheme: dark)').matches
     : false;
 
-const storedDarkMode = typeof localStorage !== 'undefined'
+const storedDarkMode = browser
     ? localStorage.getItem('darkMode')
     : null;
 
@@ -14,8 +15,8 @@ export const isDarkMode = writable(
         : prefersDarkMode
 );
 
-isDarkMode.subscribe(value => {
-    if (typeof localStorage !== 'undefined') {
+isDarkMode.subscribe((value) => {
+    if (browser) {
         localStorage.setItem('darkMode', value.toString());
     }
 });
