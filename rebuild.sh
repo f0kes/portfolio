@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 sudo docker compose down
 start_dir=$(pwd)
 
