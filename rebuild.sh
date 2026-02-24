@@ -9,4 +9,7 @@ find . -type d | while read dir; do
     fi
 done
 
+sudo nginx -t && sudo systemctl reload nginx
+sudo systemctl enable nginx
+
 sudo docker compose up --build -d
